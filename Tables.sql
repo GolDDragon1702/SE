@@ -1,12 +1,12 @@
 CREATE SCHEMA ProjectES;
 USE ProjectES;
--- drop schema projectes
+
 create table user(
 	userid varchar(10) primary key,
     usernameid varchar(20) not null,
     userrole varchar(20) not null,
     userpassword varchar(50),
-    username nvarchar(200),
+    username nvarchar(100),
     useraddrress nvarchar(300),
     userphone varchar(10),
     usermail varchar(200)
@@ -67,7 +67,7 @@ create table detail_bill(
     on delete cascade
 );
 
-CREATE TABLE shoppingcart(
+create table shoppingcart(
 	scid int primary key,
     scdate datetime,
     userid varchar(10),
@@ -77,7 +77,7 @@ CREATE TABLE shoppingcart(
     on delete cascade
 );
 
-CREATE TABLE cart(
+create table cart(
 	cartid int primary key,
     scid int,
 	productno varchar(10),
@@ -97,7 +97,7 @@ create table usual_questions(
     answer nvarchar(500)
 );
 
-CREATE TABLE feedback(
+create table feedback(
 	feedbackid int primary key,
     userid varchar(10),
     productno varchar(10),
@@ -109,4 +109,13 @@ CREATE TABLE feedback(
     constraint fb_fk2 foreign key (productno) references product(productno)
     on update cascade
     on delete cascade
+);
+
+create table employee(
+    empid varchar(10) primary key,
+    empname nvarchar(100),
+    empaddress nvarchar(300),
+    empdob datetime,
+    empjob nvarchar(100),
+    empsalary float
 );
