@@ -119,3 +119,4 @@ create table employee(
     empjob nvarchar(100),
     empsalary float
 );
+---
