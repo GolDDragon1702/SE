@@ -1,7 +1,7 @@
 CREATE SCHEMA ProjectES;
 USE ProjectES;
 
-create table user(
+create table users(
 	userid varchar(10) primary key,
     usernameid varchar(20) not null,
     userrole varchar(20) not null,
@@ -72,7 +72,7 @@ create table shoppingcart(
     scdate datetime,
     userid varchar(10),
     totalamount int,
-    constraint shoppingcart_fk foreign key (userid) references user(userid)
+    constraint shoppingcart_fk foreign key (userid) references users(userid)
     on update cascade
     on delete cascade
 );
@@ -103,7 +103,7 @@ create table feedback(
     productno varchar(10),
     score int,
     comment nvarchar(300),
-    constraint fb_fk1 foreign key (userid) references user(userid)
+    constraint fb_fk1 foreign key (userid) references users(userid)
     on update cascade
     on delete cascade,
     constraint fb_fk2 foreign key (productno) references product(productno)
@@ -120,3 +120,4 @@ create table employee(
     empsalary float
 );
 ---
+
