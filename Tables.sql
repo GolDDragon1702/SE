@@ -1,22 +1,53 @@
 CREATE SCHEMA ProjectES;
 USE ProjectES;
 
-create table user(
-	userid varchar(10) primary key,
-    usernameid varchar(20) not null,
-    userrole varchar(20) not null,
-    userpassword varchar(50),
-    username nvarchar(100),
-    useraddrress nvarchar(300),
-    userphone varchar(10),
-    usermail varchar(200)
+create table account(
+	accname varchar(20) primary key,
+    accrole varchar(20),
+    accpassword varchar(50)
+);
+
+create table customer(
+	cusid varchar(10) primary key,
+    accname varchar(20),
+    cusname nvarchar(100),
+    cusaddrress nvarchar(300),
+    cusphone varchar(10),
+    cusmail varchar(200),
+    foreign key (accname) references account(accname)
+    on update cascade
+    on delete cascade
+);
+
+create table employee(
+    empid varchar(10) primary key,
+    accname varchar(10),
+    empname nvarchar(100),
+    empaddress nvarchar(300),
+    empphone varchar(10),
+    empdob datetime,
+    empjob nvarchar(100),
+    empsalary float,
+    foreign key (accname) references account(accname)
+    on update cascade
+    on delete cascade
+);
+
+create table admin(
+    adid varchar(10) primary key,
+    accname varchar(10),
+    adname nvarchar(100),
+    adphone varchar(10),
+    foreign key (accname) references account(accname)
+    on update cascade
+    on delete cascade
 );
 
 create table provider(
-	providerno varchar(10) primary key,
-    providername nvarchar(50),
-    provideraddress nvarchar(300),
-    providerphone varchar(10)
+	pvdno varchar(10) primary key,
+    pvdname nvarchar(50),
+    pvdaddress nvarchar(300),
+    pvdphone varchar(10)
 );
 
 create table type(
@@ -27,96 +58,94 @@ create table type(
 );
 
 create table product(
-	productno varchar(10) primary key,
-    productname nvarchar(50),
+	pdtno varchar(10) primary key,
+    pdtname nvarchar(50),
     typeno varchar(10),
-    providerno varchar(10),
+    pvdno varchar(10),
     quantityinstore int,
-    price float,
+    cost float, -- giá gốc sản phẩm
     description nvarchar(300),
-    productstate nvarchar(20),
+    pdtstate nvarchar(20),
     constraint product_fk1 foreign key (typeno) references type(typeno)
     on update cascade
 	on delete cascade,
-    constraint product_fk2 foreign key (providerno) references provider(providerno)
+    constraint product_fk2 foreign key (pvdno) references provider(pvdno)
     on update cascade
 	on delete cascade
 );
 
 create table bill(
 	billno varchar(10) primary key,
+    empid varchar(10),
     billdate datetime,
-    billuserid varchar(10) not null,
     billtotal float,
-    billusername nvarchar(200),
-    billuseraddress nvarchar(300),
-    billuserphone varchar(10),
-    billnote nvarchar(50)
-);
-
-create table detail_bill(
-	billno varchar(10) not null,
-    productno varchar(10) not null,
-    quantity int,
+    cusid varchar(10) not null,
+    recepname nvarchar(200),
+    recepaddress nvarchar(300),
+    recepphone varchar(10),
     note nvarchar(50),
-    constraint db_fk1 foreign key (billno) references bill(billno)
+    status nvarchar(50),
+    foreign key (empid) references employee(empid)
     on update cascade
     on delete cascade,
-    constraint db_fk2 foreign key (productno) references product(productno)
+    foreign key (cusid) references customer(cusid)
     on update cascade
     on delete cascade
 );
 
-create table shoppingcart(
-	scid int primary key,
-    scdate datetime,
-    userid varchar(10),
-    totalamount int,
-    constraint shoppingcart_fk foreign key (userid) references user(userid)
+create table detailbill(
+	billno varchar(10) not null,
+    pdtno varchar(10) not null,
+    quantity int,
+    price float,
+    constraint db_fk1 foreign key (billno) references bill(billno)
+    on update cascade
+    on delete cascade,
+    constraint db_fk2 foreign key (pdtno) references product(pdtno)
     on update cascade
     on delete cascade
 );
 
 create table cart(
 	cartid int primary key,
-    scid int,
-	productno varchar(10),
+    cusid varchar(10),
+    totalamount int,
+    foreign key (cusid) references customer(cusid)
+    on update cascade
+    on delete cascade
+);
+
+create table detailcart(
+	cartid int,
+	pdtno varchar(10),
     quantity int,
-    price int,
-    constraint cart_fk1 foreign key (scid) references shoppingcart(scid)
+    price float, -- giá bán
+    constraint cart_fk1 foreign key (cartid) references cart(cartid)
     on update cascade
     on delete cascade,
-    constraint cart_fk2 foreign key (productno) references product(productno)
+    constraint cart_fk2 foreign key (pdtno) references product(pdtno)
     on update cascade
     on delete cascade
 );
 
 create table usual_questions(
 	id int primary key,
+    adid varchar(10),
     question nvarchar(500),
-    answer nvarchar(500)
+    answer nvarchar(500),
+    foreign key (adid) references admin(adid)
 );
 
 create table feedback(
 	feedbackid int primary key,
-    userid varchar(10),
-    productno varchar(10),
+    cusid varchar(10),
+    pdtno varchar(10),
     score int,
     comment nvarchar(300),
-    constraint fb_fk1 foreign key (userid) references user(userid)
+    constraint fb_fk1 foreign key (cusid) references customer(cusid)
     on update cascade
     on delete cascade,
-    constraint fb_fk2 foreign key (productno) references product(productno)
+    constraint fb_fk2 foreign key (pdtno) references product(pdtno)
     on update cascade
     on delete cascade
 );
-
-create table employee(
-    empid varchar(10) primary key,
-    empname nvarchar(100),
-    empaddress nvarchar(300),
-    empdob datetime,
-    empjob nvarchar(100),
-    empsalary float
-);
----
